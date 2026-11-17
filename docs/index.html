@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/icon.png" type="image/png">
+  <title>LaTeX Writer — a small LaTeX editor for the Mac</title>
+  <meta name="description" content="LaTeX Writer is a small native macOS LaTeX editor. The PDF rebuilds as you type, using the LaTeX already installed on your Mac. Free and open source." />
+  <meta name="author" content="Abhiram Mullapudi" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://abhiramm7.github.io/latex-writer/" />
+
+  <meta property="og:title" content="LaTeX Writer — a small LaTeX editor for the Mac" />
+  <meta property="og:description" content="A native macOS LaTeX editor with a live PDF preview, built on the LaTeX you already have installed." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abhiramm7.github.io/latex-writer/" />
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Navigation -->
+  <nav class="nav" aria-label="Primary navigation">
+    <div class="nav-inner">
+      <a href="#top" class="nav-logo" aria-label="LaTeX Writer home">LATEX WRITER</a>
+      <div class="nav-links" id="nav-links">
+        <a class="nav-back" href="https://randomstorms.net/">&#8592; RANDOM // STORMS</a>
+        <a href="#why">Why</a>
+        <a href="#look">A Look</a>
+        <a href="#install">Install</a>
+        <a href="https://github.com/abhiramm7/latex-writer" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="page-container">
+
+    <main id="main">
+
+      <!-- ============ HERO ============ -->
+      <section id="top" class="section hero-section">
+        <div class="hero-content">
+          <p class="eyebrow">Native macOS app &middot; Free</p>
+          <h1 class="hero-title">Write LaTeX on the left.<br>Watch the PDF<br>on the right.</h1>
+          <p class="hero-sub">
+            A small LaTeX editor for the Mac. The PDF rebuilds a moment after you stop
+            typing, using <strong>the LaTeX you already have installed</strong>.
+            No account, no subscription.
+          </p>
+          <div class="hero-cta-row">
+            <a class="link-pill link-pill-primary" href="https://github.com/abhiramm7/latex-writer/releases/latest" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 3a1 1 0 0 1 1 1v9.6l2.3-2.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4l2.3 2.3V4a1 1 0 0 1 1-1zM5 18a1 1 0 0 1 1 1v1h12v-1a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1z"/></svg>
+              Download for macOS
+            </a>
+            <a class="link-pill" href="https://github.com/abhiramm7/latex-writer" target="_blank" rel="noopener">View on GitHub</a>
+          </div>
+          <p class="hero-fineprint">macOS 14 or later &middot; Apple Silicon &middot; needs MacTeX &middot; Free</p>
+        </div>
+      </section>
+
+      <!-- ============ WHY / VALUE CARDS ============ -->
+      <section id="why" class="section" aria-labelledby="why-h">
+        <h2 id="why-h" class="section-title">Why LaTeX Writer</h2>
+        <p class="section-lede">I wanted a Mac editor that opens fast, shows the PDF next to the source, and stays out of the way. I built this for my own use and I'm sharing it in case it's useful to someone else.</p>
+
+        <ul class="cards" role="list">
+          <li class="card">
+            <div class="card-glyph" aria-hidden="true">01</div>
+            <h3>It uses your LaTeX</h3>
+            <p>It runs the MacTeX already on your Mac through latexmk, with pdfLaTeX, XeLaTeX or LuaLaTeX. Your packages and fonts work the way they do in the terminal.</p>
+          </li>
+          <li class="card">
+            <div class="card-glyph" aria-hidden="true">02</div>
+            <h3>The PDF keeps up</h3>
+            <p>Stop typing and the preview rebuilds, keeping your place. Errors show in a list and on the line that caused them.</p>
+          </li>
+          <li class="card">
+            <div class="card-glyph" aria-hidden="true">03</div>
+            <h3>A project is a folder</h3>
+            <p>Open any folder of .tex files. Chapters pulled in with \input build through the main file, and build clutter stays in a hidden folder.</p>
+          </li>
+          <li class="card">
+            <div class="card-glyph" aria-hidden="true">04</div>
+            <h3>Help while you type</h3>
+            <p>Labels and citation keys complete as you type. Command-click a spot in the PDF to jump to its source line.</p>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ============ A LOOK AT THE APP ============ -->
+      <section id="look" class="section" aria-labelledby="look-h">
+        <h2 id="look-h" class="section-title">A Look at the App</h2>
+        <p class="section-lede">Three panes: files, outline, issues and search on the left, your source in the middle, the typeset PDF on the right.</p>
+
+        <figure class="shot-wrap">
+          <img
+            src="screenshot.png"
+            alt="LaTeX Writer's three-pane window. The left sidebar lists the document outline: Introduction, Convergence, Partial sums, The Gibbs phenomenon. The centre pane shows LaTeX source with line numbers. The right pane shows the typeset PDF, titled A Note on Sawtooth Functions."
+            class="app-shot"
+            loading="lazy"
+            decoding="async"
+            width="1892"
+            height="992">
+          <figcaption class="shot-caption">LaTeX Writer on macOS: sidebar, editor, and PDF preview.</figcaption>
+        </figure>
+      </section>
+
+      <!-- ============ INSTALL ============ -->
+      <section id="install" class="section" aria-labelledby="install-h">
+        <h2 id="install-h" class="section-title">Install in Three Steps</h2>
+        <p class="section-lede">You need <a href="https://www.tug.org/mactex/" target="_blank" rel="noopener">MacTeX</a> installed first. This build is signed ad-hoc (not notarized), so macOS blocks it on first launch. You clear that once.</p>
+
+        <ol class="steps" role="list">
+          <li class="step">
+            <span class="step-num" aria-hidden="true">1</span>
+            <div>
+              <h3>Download the DMG</h3>
+              <p>Grab <code>LaTeX-Writer-&lt;version&gt;.dmg</code> from the
+              <a href="https://github.com/abhiramm7/latex-writer/releases/latest" target="_blank" rel="noopener">latest release</a>.</p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step-num" aria-hidden="true">2</span>
+            <div>
+              <h3>Drag to Applications</h3>
+              <p>Open the DMG and drag <code>LaTeX Writer.app</code> into your <code>Applications</code> folder.</p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step-num" aria-hidden="true">3</span>
+            <div>
+              <h3>Open Anyway</h3>
+              <p>Try to open the app once. Then go to <strong>System Settings &rarr; Privacy &amp; Security</strong> and click <strong>Open Anyway</strong>.</p>
+            </div>
+          </li>
+        </ol>
+
+        <div class="install-cta">
+          <a class="link-pill link-pill-primary" href="https://github.com/abhiramm7/latex-writer/releases/latest" target="_blank" rel="noopener">Download LaTeX Writer for macOS</a>
+          <p class="hero-fineprint">Free &middot; macOS 14+ &middot; Apple Silicon &middot; GPL-3.0</p>
+        </div>
+      </section>
+
+      <!-- ============ DELIBERATELY SIMPLE ============ -->
+      <section id="scope" class="section" aria-labelledby="scope-h">
+        <h2 id="scope-h" class="section-title">Deliberately Simple</h2>
+        <p class="section-lede">It does what I need for papers, posts and slides, and not much more.</p>
+
+        <ul class="scope-list" role="list">
+          <li class="scope-item">
+            <span class="scope-marker" aria-hidden="true">&mdash;</span>
+            <div>
+              <h3>No TeX engine inside</h3>
+              <p>The app does not ship its own LaTeX. It needs MacTeX, and it builds exactly what your terminal would.</p>
+            </div>
+          </li>
+          <li class="scope-item">
+            <span class="scope-marker" aria-hidden="true">&mdash;</span>
+            <div>
+              <h3>Plain files, saved as you go</h3>
+              <p>Your .tex files stay ordinary files in your folder. The app saves them a moment after you stop typing.</p>
+            </div>
+          </li>
+          <li class="scope-item">
+            <span class="scope-marker" aria-hidden="true">&mdash;</span>
+            <div>
+              <h3>A few things it skips</h3>
+              <p>No code folding, no Markdown, and no built-in AI. Templates are plain .tex files you save yourself.</p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-inner">
+        <p>
+          <a href="https://github.com/abhiramm7/latex-writer" target="_blank" rel="noopener">Source</a>
+          &nbsp;&middot;&nbsp;
+          <a href="https://github.com/abhiramm7/latex-writer/releases/latest" target="_blank" rel="noopener">Releases</a>
+          &nbsp;&middot;&nbsp;
+          <a href="https://randomstorms.net/" target="_blank" rel="noopener">randomstorms.net</a>
+        </p>
+        <p>Built with Swift &middot; No accounts &middot; No telemetry &middot; Open source under GPL-3.0.</p>
+      </div>
+    </footer>
+
+  </div><!-- /page-container -->
+
+  <script>
+    // Mobile nav toggle
+    const toggle = document.querySelector('.nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    if (toggle && navLinks) {
+      toggle.addEventListener('click', () => {
+        navLinks.classList.toggle('open');
+        toggle.classList.toggle('open');
+        const isOpen = navLinks.classList.contains('open');
+        toggle.setAttribute('aria-expanded', isOpen);
+      });
+      navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          navLinks.classList.remove('open');
+          toggle.classList.remove('open');
+          toggle.setAttribute('aria-expanded', false);
+        });
+      });
+    }
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Snappy fade-in on scroll
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReduced) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.08 });
+
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.add('fade-in');
+        observer.observe(section);
+      });
+    }
+  </script>
+</body>
+
+</html>
