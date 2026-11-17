@@ -8,6 +8,8 @@
 
 A small LaTeX editor for the Mac. You type in the middle, and the PDF on the right rebuilds a moment after you stop, using the LaTeX you already have installed (pdfLaTeX, XeLaTeX or LuaLaTeX through latexmk). It completes your labels and citation keys as you type, and a ⌘-click in the PDF takes you back to the source line.
 
+I built this for my own use. I'm sharing it in case it's useful to someone else.
+
 ## Build
 
 You need macOS 14 or later, the Xcode command line tools, and [MacTeX](https://www.tug.org/mactex/).
