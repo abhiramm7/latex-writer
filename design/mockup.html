@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LaTeX Writer mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --on-accent: #fff;
+  --chrome: #ececec; --chrome-2: #f6f6f6; --line: #d4d4d4; --bg: #fff;
+  --text: #1d1d1f; --dim: #8a8a8e; --accent: #0a6cff; --sel: #dbe8ff;
+  --cmd: #1a5fd0; --math: #c2410c; --comment: #7d8590; --arg: #0f766e;
+  --ok: #1f9d55; --err: #d92d20; --warn: #b7791f; --err-bg: #fdecea;
+  --desk: #b9b9be;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --chrome: #2b2b2d; --chrome-2: #232325; --line: #3d3d40; --bg: #1c1c1e;
+    --text: #e6e6e8; --dim: #8e8e93; --accent: #4c9bff; --sel: #1f3a63;
+    --cmd: #6cb0ff; --math: #ff9d5c; --comment: #7d8590; --arg: #5fd4c4;
+    --ok: #3ecf7a; --err: #ff6b5e; --warn: #e5b35a; --err-bg: #3a2220;
+    --desk: #48484c;
+  }
+}
+/* Nord: toolbar nord2, bars nord1, editor nord0 */
+:root[data-theme="nord"] {
+  --chrome: #434c5e; --chrome-2: #3b4252; --line: #4c566a; --bg: #2e3440;
+  --text: #d8dee9; --dim: #7b88a1; --accent: #88c0d0; --on-accent: #2e3440; --sel: #434c5e;
+  --cmd: #81a1c1; --math: #d08770; --comment: #616e88; --arg: #8fbcbb;
+  --ok: #a3be8c; --err: #bf616a; --warn: #ebcb8b; --err-bg: #4a3540;
+  --desk: #242933;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { font: 12px/1.4 "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; color: var(--text); background: var(--bg); display: flex; flex-direction: column; }
+button, select, input { font: inherit; color: inherit; }
+.mono { font-family: "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace; }
+
+/* toolbar */
+.toolbar { height: 38px; flex: none; display: flex; align-items: center; gap: 10px; padding: 0 12px; background: var(--chrome); border-bottom: 1px solid var(--line); }
+.lights { display: flex; gap: 7px; margin-right: 4px; }
+.lights i { width: 12px; height: 12px; border-radius: 50%; display: block; }
+.lights i:nth-child(1) { background: #ff5f57; } .lights i:nth-child(2) { background: #febc2e; } .lights i:nth-child(3) { background: #28c840; }
+.tb { border: 0; background: none; padding: 4px 6px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; }
+.tb:hover, .tb[aria-pressed="true"] { background: rgba(127,127,127,.22); }
+.tb svg { width: 16px; height: 13px; stroke: currentColor; fill: none; stroke-width: 1.3; }
+.tb svg .f { fill: currentColor; stroke: none; opacity: .55; }
+.live { border: 0; background: none; cursor: pointer; padding: 4px 6px; border-radius: 5px; }
+.live:hover { background: rgba(127,127,127,.22); }
+.live.off { color: var(--dim); } .live.off::before { background: var(--dim); }
+.live { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--ok); }
+.live::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); margin-right: 5px; }
+.sep { width: 1px; height: 16px; background: var(--line); }
+.toolbar select { border: 0; background: none; padding: 3px 2px; border-radius: 5px; cursor: pointer; }
+.toolbar select:hover { background: rgba(127,127,127,.22); }
+.build { color: var(--err); display: flex; align-items: center; gap: 4px; }
+.title { flex: 1; text-align: center; font-weight: 600; color: var(--dim); white-space: nowrap; overflow: hidden; }
+.seg { display: flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.seg .tb { border-radius: 0; padding: 4px 7px; }
+
+/* panes */
+.main { flex: 1; display: flex; min-height: 0; }
+.pane { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.bar[hidden] { display: none; }
+.bar { height: 26px; flex: none; display: flex; align-items: center; gap: 8px; padding: 0 10px; background: var(--chrome-2); border-bottom: 1px solid var(--line); color: var(--dim); white-space: nowrap; overflow: hidden; }
+
+/* sidebar */
+.sidebar { width: 230px; flex: none; background: var(--chrome-2); border-right: 1px solid var(--line); }
+.tabs { justify-content: space-around; padding: 0 4px; }
+.tabs button { border: 0; background: none; padding: 3px 5px; font-size: 11px; border-radius: 5px; cursor: pointer; color: var(--dim); position: relative; }
+.tabs button[aria-selected="true"] { color: var(--accent); background: rgba(127,127,127,.18); }
+.badge { background: var(--err); color: #fff; border-radius: 8px; font-size: 9px; padding: 0 4px; margin-left: 3px; }
+.stats { display: grid; grid-template-columns: 1fr auto; padding: 6px 12px; color: var(--dim); font-size: 11px; border-bottom: 1px solid var(--line); }
+.panel { flex: 1; overflow: auto; padding: 6px 0; }
+.panel[hidden] { display: none; }
+.row { display: flex; align-items: center; gap: 6px; padding: 3px 12px; cursor: default; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row:hover { background: rgba(127,127,127,.14); }
+.row.on { background: var(--sel); }
+.row.l2 { padding-left: 28px; } .row.l3 { padding-left: 44px; }
+.glyph { width: 13px; height: 13px; flex: none; border-radius: 3px; background: var(--dim); color: var(--chrome-2); font-size: 9px; font-weight: 700; display: grid; place-items: center; }
+.issue { display: block; padding: 7px 12px; border-bottom: 1px solid var(--line); white-space: normal; }
+.issue b { display: block; font-weight: 600; }
+.issue small { color: var(--dim); }
+.issue.e b { color: var(--err); } .issue.w b { color: var(--warn); }
+.btn { border: 1px solid var(--line); background: var(--bg); border-radius: 5px; padding: 2px 8px; cursor: pointer; font-size: 11px; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.filter { flex: none; padding: 6px 8px; border-top: 1px solid var(--line); }
+.filter input { width: 100%; border: 1px solid var(--line); border-radius: 6px; padding: 3px 8px; background: var(--bg); }
+
+/* editor */
+.editor { flex: 1 1 50%; border-right: 1px solid var(--line); }
+.code { flex: 1; overflow: auto; padding: 6px 0; font-size: var(--fs, 12.5px); line-height: 1.55; counter-reset: ln; }
+.ln { display: flex; counter-increment: ln; }
+.ln::before { content: counter(ln); width: 44px; flex: none; text-align: right; padding-right: 12px; color: var(--dim); font-size: .84em; line-height: 1.85; user-select: none; }
+.ln > span.t { flex: 1; padding: 0 12px 0 2.2em; text-indent: -2.2em; white-space: pre-wrap; overflow-wrap: anywhere; min-height: 1.55em; }
+.ln.cur { background: rgba(127,127,127,.10); }
+.ln.bad { background: var(--err-bg); }
+.c { color: var(--cmd); } .m { color: var(--math); } .k { color: var(--comment); font-style: italic; } .a { color: var(--arg); }
+.sq { text-decoration: underline wavy var(--err); text-underline-offset: 3px; }
+.cursor { box-shadow: -1.5px 0 0 var(--accent); }
+.ai { margin: 4px 12px 8px 44px; border: 1px solid var(--line); border-radius: 8px; background: var(--chrome-2); font-family: "IBM Plex Sans", -apple-system, sans-serif; font-size: 12px; line-height: 1.4; overflow: hidden; }
+.ai header { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-bottom: 1px solid var(--line); }
+.ai header span { margin-left: auto; color: var(--dim); font-size: 10.5px; }
+.ai .diff { padding: 6px 10px; }
+.ai del { color: var(--err); background: var(--err-bg); text-decoration: line-through; }
+.ai ins { color: var(--ok); text-decoration: none; background: rgba(31,157,85,.14); }
+.ai footer { display: flex; gap: 6px; padding: 6px 10px; align-items: center; color: var(--dim); font-size: 10.5px; }
+.status { height: 22px; flex: none; display: flex; align-items: center; gap: 12px; padding: 0 10px 0 0; background: var(--chrome-2); border-top: 1px solid var(--line); color: var(--dim); font-size: 10.5px; }
+.status .r { margin-left: auto; }
+
+/* pdf */
+.pdf { flex: 1 1 50%; }
+.paper-wrap { flex: 1; overflow: auto; background: var(--desk); padding: 18px; }
+.paper-wrap[data-mode="single"] .paper:not(.show) { display: none; }
+.pageno { position: absolute; bottom: 26px; left: 0; right: 0; text-align: center; }
+.paper { background: #fff; color: #111; max-width: 520px; min-height: 640px; position: relative; margin: 0 auto 14px; padding: 56px 54px 70px; box-shadow: 0 1px 6px rgba(0,0,0,.3); font: 11.5px/1.6 Palatino, "Palatino Linotype", "Book Antiqua", serif; text-align: left; }
+.paper h2 { font-style: italic; font-weight: 400 !important; }
+.eq { font-family: "Latin Modern Math", "Times New Roman", serif; }
+#defaults { border: 1px solid var(--line); border-radius: 10px; background: var(--chrome-2); color: var(--text); padding: 16px 18px; width: 340px; box-shadow: 0 10px 40px rgba(0,0,0,.4); }
+#defaults::backdrop { background: rgba(0,0,0,.3); }
+#defaults h3 { margin: 0 0 10px; font-size: 13px; }
+#defaults label { display: grid; grid-template-columns: 110px 1fr; align-items: center; margin: 7px 0; }
+#defaults select { border: 1px solid var(--line); border-radius: 5px; background: var(--bg); padding: 3px 6px; }
+#defaults p { color: var(--dim); font-size: 11px; margin: 10px 0 0; }
+#defaults .w { color: var(--warn); }
+.paper h1 { font-size: 18px; font-weight: 400; text-align: center; margin: 0 0 6px; }
+.paper .by { text-align: center; margin-bottom: 22px; }
+.paper h2 { font-size: 14px; margin: 18px 0 6px; }
+.eq { display: flex; align-items: center; justify-content: center; gap: 5px; margin: 12px 0; position: relative; font-style: italic; }
+.eq .no { position: absolute; right: 0; font-style: normal; }
+.frac { display: inline-flex; flex-direction: column; text-align: center; line-height: 1.15; }
+.frac span:first-child { border-bottom: 1px solid #111; padding: 0 3px; }
+.sum { font-size: 22px; font-style: normal; line-height: 1; }
+.hl { background: #fff2a8; }
+.undef { font-weight: 700; }
+
+/* layout modes */
+.main[data-layout="editor"] .pdf, .main[data-layout="pdf"] .editor, .main.nosb .sidebar { display: none; }
+@media (max-width: 700px) { .sidebar { display: none; } .title { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="lights"><i></i><i></i><i></i></div>
+  <button class="tb" id="sbToggle" title="Toggle sidebar" aria-label="Toggle sidebar"><svg viewBox="0 0 16 13"><rect x=".7" y=".7" width="14.6" height="11.6" rx="2"/><rect class="f" x="1.5" y="1.5" width="4" height="10"/></svg></button>
+  <button class="live" id="live" title="Live compile on. Click to switch to manual.">LIVE</button>
+  <button class="btn" id="typeset" hidden title="Typeset now">&#9654; Typeset</button>
+  <span class="sep"></span>
+  <select id="engine" title="Typesetting engine" aria-label="Typesetting engine">
+    <option>pdfLaTeX</option><option selected>XeLaTeX</option><option>LuaLaTeX</option>
+  </select>
+  <span class="sep"></span>
+  <span class="build" title="Last build">&#9888; 1 error</span>
+  <span class="title">main.tex — sawtooth-note</span>
+  <button class="tb" popovertarget="defaults" title="Document defaults" aria-label="Document defaults">&#9881;</button>
+  <div id="defaults" popover>
+    <h3>Document defaults</h3>
+    <label>Body font <select><option>Palatino</option><option>Latin Modern</option><option>Times</option></select></label>
+    <label>Style <select><option>Tufte, full width</option><option>Article</option><option>Tufte with margin notes</option></select></label>
+    <label>Engine <select><option>XeLaTeX</option><option>pdfLaTeX</option><option>LuaLaTeX</option></select></label>
+    <p>New documents start with these as plain LaTeX in the preamble, so they compile anywhere.</p>
+  </div>
+  <select id="theme" title="Theme" aria-label="Theme"><option value="">System</option><option value="nord" selected>Nord</option></select>
+  <div class="seg" role="group" aria-label="Layout">
+    <button class="tb" data-layout="editor" title="Editor only"><svg viewBox="0 0 16 13"><rect x=".7" y=".7" width="14.6" height="11.6" rx="2"/><rect class="f" x="1.5" y="1.5" width="13" height="10"/></svg></button>
+    <button class="tb" data-layout="split" aria-pressed="true" title="Split"><svg viewBox="0 0 16 13"><rect x=".7" y=".7" width="14.6" height="11.6" rx="2"/><line x1="8" y1="1" x2="8" y2="12"/></svg></button>
+    <button class="tb" data-layout="pdf" title="PDF only"><svg viewBox="0 0 16 13"><rect x=".7" y=".7" width="14.6" height="11.6" rx="2"/><line x1="4" y1="4" x2="12" y2="4"/><line x1="4" y1="6.5" x2="12" y2="6.5"/><line x1="4" y1="9" x2="9" y2="9"/></svg></button>
+  </div>
+</div>
+
+<div class="main" data-layout="split">
+
+  <aside class="pane sidebar">
+    <div class="bar tabs" role="tablist">
+      <button data-tab="outline" aria-selected="true">Outline</button>
+      <button data-tab="files" aria-selected="false">Files</button>
+      <button data-tab="issues" aria-selected="false">Issues<span class="badge">2</span></button>
+      <button data-tab="todos" aria-selected="false">TODO</button>
+    </div>
+    <div class="stats"><span>Files</span><span>2</span><span>Words</span><span>148</span></div>
+
+    <div class="panel" data-panel="outline">
+      <div class="row"><span class="glyph">T</span>Sawtooth Functions</div>
+      <div class="row l2"><span class="glyph">S</span>Introduction</div>
+      <div class="row l3"><span class="glyph">E</span>eq:saw</div>
+      <div class="row l2 on"><span class="glyph">S</span>Convergence</div>
+    </div>
+    <div class="panel" data-panel="files" hidden>
+      <div class="row on">main.tex</div>
+      <div class="row">refs.bib</div>
+      <div class="row">figures/</div>
+    </div>
+    <div class="panel" data-panel="issues" hidden>
+      <div class="issue e"><b>Undefined control sequence</b><small>main.tex:21 — \alpah</small><br><button class="btn" style="margin-top:5px">Fix with AI</button></div>
+      <div class="issue w"><b>Package not installed</b><small>main.tex:4 — cleveref</small><br><button class="btn" data-install style="margin-top:5px">Install</button></div>
+      <div class="issue w"><b>Overfull \hbox (4.2pt too wide)</b><small>main.tex:14</small></div>
+    </div>
+    <div class="panel" data-panel="todos" hidden>
+      <div class="row">add figure of partial sums <small style="color:var(--dim)">:22</small></div>
+    </div>
+
+    <div class="filter"><input placeholder="Filter" aria-label="Filter"></div>
+  </aside>
+
+  <section class="pane editor">
+    <div class="bar">sawtooth-note &rsaquo; <b style="color:var(--text)">main.tex</b>
+      <button class="tb" id="fsDown" style="margin-left:auto" title="Smaller text" aria-label="Smaller text">A&minus;</button><span id="fsLabel">12.5</span><button class="tb" id="fsUp" title="Larger text" aria-label="Larger text">A+</button></div>
+    <div class="bar pkg" id="pkg"><span style="color:var(--warn)">&#9888;</span><span style="color:var(--text)">Package <b>cleveref</b> is not installed.</span><button class="btn" data-install style="margin-left:auto">Install</button><button class="btn" onclick="this.parentNode.hidden=true">Ignore</button></div>
+    <div class="code mono">
+      <div class="ln"><span class="t"><span class="k">% !TEX program = xelatex</span></span></div>
+      <div class="ln"><span class="t"><span class="c">\documentclass</span>[11pt]{<span class="a">article</span>}</span></div>
+      <div class="ln"><span class="t"><span class="c">\usepackage</span>[margin=1.2in]{<span class="a">geometry</span>}</span></div>
+      <div class="ln"><span class="t"><span class="c">\usepackage</span>{<span class="a">amsmath, amssymb, graphicx, ragged2e, titlesec, fontspec, <span class="sq" style="text-decoration-color:var(--warn)">cleveref</span></span>}</span></div>
+      <div class="ln"><span class="t"><span class="c">\setmainfont</span>{<span class="a">Palatino</span>}</span></div>
+      <div class="ln"><span class="t"><span class="c">\titleformat</span>{<span class="c">\section</span>}{<span class="c">\Large\itshape</span>}{}{0pt}{}</span></div>
+      <div class="ln"><span class="t"><span class="c">\RaggedRight</span> <span class="c">\setlength</span>{<span class="c">\parindent</span>}{1em}</span></div>
+      <div class="ln"><span class="t"><span class="c">\title</span>{A Note on Sawtooth Functions}</span></div>
+      <div class="ln"><span class="t"><span class="c">\author</span>{A. Author}</span></div>
+      <div class="ln"><span class="t"><span class="c">\begin</span>{<span class="a">document</span>}</span></div>
+      <div class="ln"><span class="t"><span class="c">\maketitle</span></span></div>
+      <div class="ln"><span class="t"></span></div>
+      <div class="ln"><span class="t"><span class="c">\section</span>{Introduction}</span></div>
+      <div class="ln"><span class="t">We study the periodic sawtooth function and its Fourier expansion, following <span class="c">\cite</span>{<span class="a">knuth1984</span>}. The key identity is stated in Equation~<span class="c">\eqref</span>{<span class="a">eq:saw</span>}.</span></div>
+      <div class="ln"><span class="t"></span></div>
+      <div class="ln"><span class="t"><span class="c">\begin</span>{<span class="a">equation</span>}<span class="c">\label</span>{<span class="a">eq:saw</span>}</span></div>
+      <div class="ln cur"><span class="t"><span class="m">  S(x) = <span class="cursor">\</span>frac{1}{2} - \frac{1}{\pi} \sum_{n=1}^{\infty} \frac{\sin(2\pi n x)}{n}</span></span></div>
+      <div class="ln"><span class="t"><span class="c">\end</span>{<span class="a">equation</span>}</span></div>
+      <div class="ln"><span class="t"></span></div>
+      <div class="ln"><span class="t"><span class="c">\section</span>{Convergence}</span></div>
+      <div class="ln bad"><span class="t">The partial sums converge for every <span class="m">$x \notin \mathbb{Z}$</span>, with rate governed by <span class="c sq">\alpah</span>.</span></div>
+      <div class="ai">
+        <header><b style="color:var(--err)">Undefined control sequence</b><span>local model</span></header>
+        <div class="diff mono">rate governed by <del>\alpah</del><ins>\alpha</ins>.</div>
+        <footer><button class="btn primary">Accept</button><button class="btn">Reject</button>&#9166; accept &nbsp;·&nbsp; esc reject</footer>
+      </div>
+      <div class="ln"><span class="t"><span class="k">% TODO: add figure of partial sums</span></span></div>
+      <div class="ln"><span class="t"><span class="c">\end</span>{<span class="a">document</span>}</span></div>
+    </div>
+    <div class="status mono">
+      <span style="padding-left:10px">Line 17, Col 10</span>
+      <span class="r" id="buildInfo">xelatex · 0.8s · 1 error</span>
+    </div>
+  </section>
+
+  <section class="pane pdf">
+    <div class="bar">
+      <span>&minus;</span><span>100%</span><span>+</span>
+      <div class="seg" role="group" aria-label="Page display">
+        <button class="tb" data-pdf="single" title="Single page"><svg viewBox="0 0 16 13"><rect x="4.5" y=".7" width="7" height="11.6" rx="1"/></svg></button>
+        <button class="tb" data-pdf="continuous" aria-pressed="true" title="Continuous scroll"><svg viewBox="0 0 16 13"><rect x="4.5" y="-3" width="7" height="8" rx="1"/><rect x="4.5" y="7" width="7" height="9" rx="1"/></svg></button>
+      </div>
+      <span style="margin:0 auto" id="pageLabel">Page 1 of 2</span>
+      <button class="tb" id="prev" aria-label="Previous page">&lsaquo;</button><button class="tb" id="next" aria-label="Next page">&rsaquo;</button>
+    </div>
+    <div class="paper-wrap" data-mode="continuous">
+      <div class="paper">
+        <h1>A Note on Sawtooth Functions</h1>
+        <div class="by">A. Author<br>November 17, 2026</div>
+        <h2>Introduction</h2>
+        <p>We study the periodic sawtooth function and its Fourier expansion, following [1]. The key identity is stated in Equation (1).</p>
+        <div class="eq hl">
+          S(x) =
+          <span class="frac"><span>1</span><span>2</span></span> &minus;
+          <span class="frac"><span>1</span><span>&pi;</span></span>
+          <span class="sum">&sum;</span>
+          <span class="frac"><span>sin(2&pi;nx)</span><span>n</span></span>
+          <span class="no">(1)</span>
+        </div>
+        <h2>Convergence</h2>
+        <p>The partial sums converge for every <i>x</i> &notin; <b>Z</b>, with rate governed by <span class="undef">??</span>.</p>
+        <div class="pageno">1</div>
+      </div>
+      <div class="paper">
+        <h2>Partial sums</h2>
+        <p>Near each integer the partial sums overshoot the jump by a fixed proportion that does not vanish as more terms are added. This is the Gibbs phenomenon.</p>
+        <h2>References</h2>
+        <p>[1] D. E. Knuth. <i>The TeXbook</i>. Addison-Wesley, 1984.</p>
+        <div class="pageno">2</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+const main = document.querySelector('.main');
+document.getElementById('sbToggle').onclick = () => main.classList.toggle('nosb');
+document.querySelectorAll('[data-layout].tb').forEach(b => b.onclick = () => {
+  main.dataset.layout = b.dataset.layout;
+  document.querySelectorAll('[data-layout].tb').forEach(x => x.setAttribute('aria-pressed', x === b));
+});
+document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => {
+  document.querySelectorAll('[data-tab]').forEach(x => x.setAttribute('aria-selected', x === b));
+  document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== b.dataset.tab);
+});
+document.getElementById('engine').onchange = e =>
+  document.getElementById('buildInfo').textContent = e.target.value.toLowerCase() + ' · 0.8s · 1 error';
+// mock: the real app runs the TeX package manager here
+document.querySelectorAll('[data-install]').forEach(b => b.onclick = () => {
+  document.getElementById('pkg').innerHTML = '<span style="color:var(--ok)">&#10003;</span><span style="color:var(--text)">Installed <b>cleveref</b>. Rebuilding…</span>';
+  document.querySelectorAll('[data-install]').forEach(x => { x.disabled = true; x.textContent = 'Installed'; });
+});
+const live = document.getElementById('live'), typeset = document.getElementById('typeset');
+live.onclick = () => {
+  const off = live.classList.toggle('off');
+  live.textContent = off ? 'MANUAL' : 'LIVE';
+  live.title = off ? 'Live compile off. Click to turn on.' : 'Live compile on. Click to switch to manual.';
+  typeset.hidden = !off;
+};
+let fs = 12.5;
+const setFs = d => {
+  fs = Math.max(9.5, Math.min(24.5, fs + d));
+  document.querySelector('.code').style.setProperty('--fs', fs + 'px');
+  document.getElementById('fsLabel').textContent = fs;
+};
+document.getElementById('fsDown').onclick = () => setFs(-1);
+document.getElementById('fsUp').onclick = () => setFs(1);
+const theme = document.getElementById('theme');
+(theme.onchange = () => document.documentElement.dataset.theme = theme.value)();
+
+// PDF paging: single page vs continuous scroll
+const wrap = document.querySelector('.paper-wrap'), papers = [...wrap.querySelectorAll('.paper')];
+let page = 0;
+const showPage = scroll => {
+  papers.forEach((p, i) => p.classList.toggle('show', i === page));
+  document.getElementById('pageLabel').textContent = `Page ${page + 1} of ${papers.length}`;
+  if (scroll && wrap.dataset.mode === 'continuous') papers[page].scrollIntoView({ block: 'start' });
+};
+const turn = d => { page = Math.max(0, Math.min(papers.length - 1, page + d)); showPage(true); };
+document.getElementById('prev').onclick = () => turn(-1);
+document.getElementById('next').onclick = () => turn(1);
+wrap.onscroll = () => {
+  if (wrap.dataset.mode !== 'continuous') return;
+  const mid = wrap.scrollTop + wrap.clientHeight / 2;
+  page = Math.max(0, papers.findLastIndex(p => p.offsetTop - wrap.offsetTop <= mid));
+  showPage(false);
+};
+document.querySelectorAll('[data-pdf]').forEach(b => b.onclick = () => {
+  wrap.dataset.mode = b.dataset.pdf;
+  document.querySelectorAll('[data-pdf]').forEach(x => x.setAttribute('aria-pressed', x === b));
+  showPage(true);
+});
+showPage(false);
+
+</script>
+</body>
+</html>

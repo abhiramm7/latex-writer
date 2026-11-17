@@ -1,0 +1,32 @@
+% !TEX program = xelatex
+\documentclass[11pt]{article}
+\usepackage[margin=1.2in]{geometry}
+\usepackage{amsmath, amssymb, graphicx, ragged2e, titlesec, fontspec}
+\setmainfont{Palatino}
+\titleformat{\section}{\Large\itshape}{}{0pt}{}
+\titleformat{\subsection}{\large\itshape}{}{0pt}{}
+\RaggedRight \setlength{\parindent}{1em}
+
+\title{A Note on Sawtooth Functions}
+\author{A. Author}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+We study the periodic sawtooth function and its Fourier expansion. The key identity is stated in Equation~\eqref{eq:saw}.
+
+\begin{equation}\label{eq:saw}
+  S(x) = \frac{1}{2} - \frac{1}{\pi} \sum_{n=1}^{\infty} \frac{\sin(2\pi n x)}{n}
+\end{equation}
+
+\section{Convergence}
+The partial sums converge for every $x \notin \mathbb{Z}$, with rate governed by \alpah.
+
+\subsection{Partial sums}
+% TODO: add figure of partial sums
+Near each integer the partial sums overshoot the jump by a fixed proportion.
+
+\input{chapters/gibbs}
+
+\end{document}
